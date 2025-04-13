@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - StudyBuddyAI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .social-btn {
+            margin-bottom: 15px;
+            font-weight: 400;
+            font-size: 16px;
+        }
+        .social-btn img {
+            height: 24px;
+            margin-right: 10px;
+        }
+        .google-btn {
+            background-color: #ffffff;
+            color: #555;
+            border: 1px solid #ddd;
+        }
+        .github-btn {
+            background-color: #24292e;
+            color: white;
+        }
+        .or-separator {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .or-text {
+            position: absolute;
+            padding: 0 10px;
+            background-color: #fff;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h4>Sign In to StudyBuddyAI</h4>
+                </div>
+                <div class="card-body">
+                    <div th:if="${param.error}" class="alert alert-danger">
+                        Invalid email and password.
+                    </div>
+                    <div th:if="${param.logout}" class="alert alert-success">
+                        You have been logged out.
+                    </div>
+
+                    <!-- Social Login Buttons -->
+                    <div class="text-center mb-4">
+                        <a href="/oauth2/authorization/google" class="btn btn-block social-btn google-btn w-100">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google">
+                            Sign in with Google
+                        </a>
+                        <a href="/oauth2/authorization/github" class="btn btn-block social-btn github-btn w-100 mt-2">
+                            <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" style="filter: invert(1);">
+                            Sign in with GitHub
+                        </a>
+                    </div>
+
+                    <div class="or-separator">
+                        <span class="or-text">OR</span>
+                    </div>
+
+                    <!-- Local Login Form -->
+                    <form th:action="@{/login}" method="post">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Email or Username</label>
+                            <input type="text" id="username" name="username" class="form-control" required autofocus>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" id="password" name="password" class="form-control" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" id="remember-me" name="remember-me" class="form-check-input">
+                            <label for="remember-me" class="form-check-label">Remember me</label>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Sign In</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <div>Don't have an account? <a href="/register">Sign up</a></div>
+                    <div class="mt-2"><a href="/forgot-password">Forgot your password?</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

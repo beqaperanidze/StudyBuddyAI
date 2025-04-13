@@ -43,6 +43,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserDto> findAll() {
+        return userRepository.findAll().stream()
+                .map(userMapper::userToUserDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public UserDto findByUsername(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() ->
                 new UserNotFoundException("User not found with username: " + username));
@@ -83,11 +90,5 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException("User not found with id: " + id);
         }
         userRepository.deleteById(id);
-    }
-
-    public List<UserDto> findAll() {
-        return userRepository.findAll().stream()
-                .map(userMapper::userToUserDto)
-                .collect(Collectors.toList());
     }
 }
