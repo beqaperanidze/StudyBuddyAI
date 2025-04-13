@@ -21,11 +21,14 @@ import java.util.Optional;
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private OAuth2UserInfoRepository oAuth2UserInfoRepository;
+    private final OAuth2UserInfoRepository oAuth2UserInfoRepository;
+
+    public CustomOAuth2UserService(UserRepository userRepository, OAuth2UserInfoRepository oAuth2UserInfoRepository) {
+        this.userRepository = userRepository;
+        this.oAuth2UserInfoRepository = oAuth2UserInfoRepository;
+    }
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
