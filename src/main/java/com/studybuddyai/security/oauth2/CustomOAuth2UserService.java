@@ -6,7 +6,6 @@ import com.studybuddyai.model.User;
 import com.studybuddyai.repository.OAuth2UserInfoRepository;
 import com.studybuddyai.repository.UserRepository;
 import com.studybuddyai.security.UserPrincipal;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -75,7 +74,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         user.setProviderId(oAuth2UserInfo.getProviderId());
         user.setUsername(oAuth2UserInfo.getName());
         user.setEmail(oAuth2UserInfo.getEmail());
-        // No password needed for OAuth2 authentication
         user.setPassword(null);
 
         User savedUser = userRepository.save(user);
