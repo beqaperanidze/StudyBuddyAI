@@ -2,13 +2,14 @@ package com.studybuddyai.service;
 
 import com.studybuddyai.dto.UserDto;
 import com.studybuddyai.dto.UserRegistrationDto;
-import com.studybuddyai.model.User;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public interface UserService {
 
-    UserDto registerNewUserAccount(UserRegistrationDto user);
+    UserDto registerNewUser(UserRegistrationDto user);
 
     List<UserDto> findAll();
 
@@ -21,5 +22,7 @@ public interface UserService {
     UserDto updateUser(Long id, UserRegistrationDto user);
 
     void deleteUser(Long id);
+
+    void deleteAllUser();
 
 }

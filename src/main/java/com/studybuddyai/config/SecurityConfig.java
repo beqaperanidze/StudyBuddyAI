@@ -34,8 +34,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/", "/login", "/register", "/auth/**", "/oauth2/**").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/users/**", "/login", "/register", "/auth/**", "/oauth2/**").permitAll()
+                        .anyRequest().permitAll()
                 )
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")

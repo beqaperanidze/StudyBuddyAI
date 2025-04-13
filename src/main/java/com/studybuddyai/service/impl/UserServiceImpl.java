@@ -5,6 +5,7 @@ import com.studybuddyai.dto.UserRegistrationDto;
 import com.studybuddyai.exception.UserNotFoundException;
 import com.studybuddyai.mapper.UserMapper;
 import com.studybuddyai.model.User;
+import com.studybuddyai.model.enums.Role;
 import com.studybuddyai.repository.UserRepository;
 import com.studybuddyai.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,7 +29,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto registerNewUserAccount(UserRegistrationDto userDto) {
+    public UserDto registerNewUser(UserRegistrationDto userDto) {
         if (userRepository.existsByUsername(userDto.getUsername())) {
             throw new IllegalArgumentException("Username already exists");
         }
@@ -38,6 +39,7 @@ public class UserServiceImpl implements UserService {
 
         User newUser = userMapper.userRegistrationDtoToUser(userDto);
         newUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        newUser.setRole(Role.USER);
         User savedUser = userRepository.save(newUser);
         return userMapper.userToUserDto(savedUser);
     }
@@ -90,5 +92,10 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException("User not found with id: " + id);
         }
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteAllUser() {
+        userRepository.deleteAll();
     }
 }
