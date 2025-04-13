@@ -34,12 +34,14 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/users/**", "/login", "/register", "/auth/**", "/oauth2/**").permitAll()
-                        .anyRequest().permitAll()
+                        .requestMatchers("/login", "/register", "/auth/**", "/oauth2/**").permitAll()
+                        .requestMatchers("/swagger/**", "swagger-ui/**").authenticated()
+                        .requestMatchers("/api/users/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
                 )
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
-                        .defaultSuccessUrl("/dashboard")
+                        .defaultSuccessUrl("/swagger-ui/index.html")
                         .permitAll()
                 )
                 .logout(logout -> logout

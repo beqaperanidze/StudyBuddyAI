@@ -7,11 +7,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f0f8ff;
+            background-color: rgb(26, 28, 39);
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
+            color: #e0e0e0;
         }
         .login-container {
             max-width: 500px;
@@ -19,11 +20,12 @@
         }
         .card {
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             border: none;
+            background-color: #1e1e1e;
         }
         .card-header {
-            background-color: #4285F4;
+            background-color: #424242;
             color: white;
             border-radius: 12px 12px 0 0 !important;
             padding: 20px;
@@ -38,26 +40,37 @@
             justify-content: center;
         }
         .google-btn {
-            background-color: #ffffff;
-            color: #555;
-            border: 1px solid #ddd;
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+            border: 1px solid #444;
             transition: all 0.3s ease;
         }
         .google-btn:hover {
-            background-color: #f1f1f1;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background-color: #3d3d3d;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
         .google-btn svg {
             margin-right: 10px;
         }
         .welcome-text {
-            color: #555;
+            color: #c0c0c0;
             margin-bottom: 30px;
             text-align: center;
         }
         .card-footer {
-            background-color: #e6f2ff;
+            background-color: #252525;
             border-radius: 0 0 12px 12px !important;
+            color: #a0a0a0;
+        }
+        .alert-danger {
+            background-color: #3d1c1c;
+            color: #ff7070;
+            border-color: #5c2b2b;
+        }
+        .alert-success {
+            background-color: #1c3d2c;
+            color: #70ff94;
+            border-color: #2b5c3f;
         }
     </style>
 </head>
