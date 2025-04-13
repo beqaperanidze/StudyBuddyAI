@@ -1,5 +1,7 @@
 package com.studybuddyai.model;
 
+import com.studybuddyai.model.enums.AuthProvider;
+import com.studybuddyai.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +20,7 @@ public class User {
     private String username;
     private String email;
     private String password;
+    private Role role;
 
     @Enumerated(EnumType.STRING)
     private AuthProvider provider = AuthProvider.LOCAL;

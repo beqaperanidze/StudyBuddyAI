@@ -3,7 +3,6 @@ package com.studybuddyai.config;
 import com.studybuddyai.security.CustomUserDetailsService;
 import com.studybuddyai.security.oauth2.CustomOAuth2UserService;
 import com.studybuddyai.security.oauth2.OAuth2AuthenticationSuccessHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

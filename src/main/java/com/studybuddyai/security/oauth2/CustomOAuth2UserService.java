@@ -1,8 +1,9 @@
 package com.studybuddyai.security.oauth2;
 
 import com.studybuddyai.exception.OAuth2AuthenticationProcessingException;
-import com.studybuddyai.model.AuthProvider;
+import com.studybuddyai.model.enums.AuthProvider;
 import com.studybuddyai.model.User;
+import com.studybuddyai.model.enums.Role;
 import com.studybuddyai.repository.OAuth2UserInfoRepository;
 import com.studybuddyai.repository.UserRepository;
 import com.studybuddyai.security.UserPrincipal;
@@ -46,16 +47,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String registrationId = oAuth2UserRequest.getClientRegistration().getRegistrationId();
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(registrationId, oAuth2User.getAttributes());
 
-        if(!StringUtils.hasText(oAuth2UserInfo.getEmail())) {
+        if (!StringUtils.hasText(oAuth2UserInfo.getEmail())) {
             throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
         }
 
         Optional<User> userOptional = userRepository.findByEmail(oAuth2UserInfo.getEmail());
         User user;
 
-        if(userOptional.isPresent()) {
+        if (userOptional.isPresent()) {
             user = userOptional.get();
-            if(!user.getProvider().equals(AuthProvider.valueOf(registrationId.toUpperCase()))) {
+            if (!user.getProvider().equals(AuthProvider.valueOf(registrationId.toUpperCase()))) {
                 throw new OAuth2AuthenticationProcessingException("You've signed up with " +
                         user.getProvider() + ". Please use your " + user.getProvider() + " account to login");
             }
@@ -72,9 +73,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         user.setProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId().toUpperCase()));
         user.setProviderId(oAuth2UserInfo.getProviderId());
-        user.setUsername(oAuth2UserInfo.getName());
+        user.setUsername(oAuth2UserInfo.getName().replace(" ", ""));
         user.setEmail(oAuth2UserInfo.getEmail());
         user.setPassword(null);
+        user.setRole(Role.USER);
 
         User savedUser = userRepository.save(user);
 

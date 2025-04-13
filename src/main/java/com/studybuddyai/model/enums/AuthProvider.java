@@ -1,4 +1,4 @@
-package com.studybuddyai.model;
+package com.studybuddyai.model.enums;
 
 public enum AuthProvider {
     LOCAL,
