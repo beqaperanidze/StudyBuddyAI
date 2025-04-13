@@ -6,96 +6,96 @@
     <title>Login - StudyBuddyAI</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .social-btn {
-            margin-bottom: 15px;
-            font-weight: 400;
-            font-size: 16px;
+        body {
+            background-color: #f0f8ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
         }
-        .social-btn img {
-            height: 24px;
-            margin-right: 10px;
+        .login-container {
+            max-width: 500px;
+            width: 100%;
+        }
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+        .card-header {
+            background-color: #4285F4;
+            color: white;
+            border-radius: 12px 12px 0 0 !important;
+            padding: 20px;
+        }
+        .social-btn {
+            font-weight: 500;
+            font-size: 16px;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .google-btn {
             background-color: #ffffff;
             color: #555;
             border: 1px solid #ddd;
+            transition: all 0.3s ease;
         }
-        .github-btn {
-            background-color: #24292e;
-            color: white;
+        .google-btn:hover {
+            background-color: #f1f1f1;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
-        .or-separator {
-            border-bottom: 1px solid #eee;
-            padding: 10px 0;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 20px 0;
+        .google-btn svg {
+            margin-right: 10px;
         }
-        .or-text {
-            position: absolute;
-            padding: 0 10px;
-            background-color: #fff;
-            color: #999;
+        .welcome-text {
+            color: #555;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .card-footer {
+            background-color: #e6f2ff;
+            border-radius: 0 0 12px 12px !important;
         }
     </style>
 </head>
 <body>
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card">
-                <div class="card-header text-center">
-                    <h4>Sign In to StudyBuddyAI</h4>
-                </div>
-                <div class="card-body">
-                    <div th:if="${param.error}" class="alert alert-danger">
-                        Invalid email and password.
-                    </div>
-                    <div th:if="${param.logout}" class="alert alert-success">
-                        You have been logged out.
-                    </div>
-
-                    <div class="text-center mb-4">
-                        <a href="/oauth2/authorization/google" class="btn btn-block social-btn google-btn w-100">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google">
-                            Sign in with Google
-                        </a>
-                        <a href="/oauth2/authorization/github" class="btn btn-block social-btn github-btn w-100 mt-2">
-                            <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" style="filter: invert(1);">
-                            Sign in with GitHub
-                        </a>
-                    </div>
-
-                    <div class="or-separator">
-                        <span class="or-text">OR</span>
-                    </div>
-
-                    <!-- Local Login Form -->
-                    <form th:action="@{/login}" method="post">
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Email or Username</label>
-                            <input type="text" id="username" name="username" class="form-control" required autofocus>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" id="password" name="password" class="form-control" required>
-                        </div>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" id="remember-me" name="remember-me" class="form-check-input">
-                            <label for="remember-me" class="form-check-label">Remember me</label>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">Sign In</button>
-                        </div>
-                    </form>
-                </div>
-                <div class="card-footer text-center">
-                    <div>Don't have an account? <a href="/register">Sign up</a></div>
-                    <div class="mt-2"><a href="/forgot-password">Forgot your password?</a></div>
-                </div>
+<div class="container login-container">
+    <div class="card">
+        <div class="card-header text-center">
+            <h3>Sign In to StudyBuddyAI</h3>
+        </div>
+        <div class="card-body p-4">
+            <div th:if="${param.error}" class="alert alert-danger text-center">
+                Authentication error.
             </div>
+            <div th:if="${param.logout}" class="alert alert-success text-center">
+                You have been logged out.
+            </div>
+
+            <div class="welcome-text">
+                <h4>Welcome to StudyBuddyAI!</h4>
+                <p>Your personal AI-powered study assistant that helps you learn smarter, not harder.</p>
+                <p>Access personalized study plans, intelligent flashcards, and AI-guided learning pathways with just a single sign-in.</p>
+            </div>
+
+            <div class="text-center">
+                <a href="/oauth2/authorization/google" class="btn btn-block social-btn google-btn w-100">
+                    <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                        <path fill="none" d="M0 0h48v48H0z"/>
+                    </svg>
+                    Sign in with Google
+                </a>
+            </div>
+        </div>
+        <div class="card-footer text-center py-3">
+            <div>Please use your Google account to sign in</div>
         </div>
     </div>
 </div>
