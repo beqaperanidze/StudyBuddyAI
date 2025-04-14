@@ -9,14 +9,16 @@ import com.studybuddyai.repository.DocumentRepository;
 import com.studybuddyai.repository.UserRepository;
 import com.studybuddyai.service.ClientService;
 import com.studybuddyai.service.DocumentService;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class DocumentServiceImpl implements DocumentService {
@@ -32,7 +34,29 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public Document uploadAndParseDocument(MultipartFile file) {
-        return null;
+        if (file.isEmpty()) {
+            throw new RuntimeException("Uploaded file is empty");
+        }
+
+        User user = getAuthenticatedUser();
+
+        try (var inputStream = file.getInputStream()) {
+            var pdfDocument = PDDocument.load(inputStream);
+            var pdfStripper = new PDFTextStripper();
+            String parsedText = pdfStripper.getText(pdfDocument);
+            pdfDocument.close();
+
+            Document document = new Document();
+            document.setName(file.getOriginalFilename());
+            document.setOriginalFileName(file.getOriginalFilename());
+            document.setContent(parsedText);
+            document.setUser(user);
+
+            return documentRepository.save(document);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read and parse PDF", e);
+        }
     }
 
     @Override
