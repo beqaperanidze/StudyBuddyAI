@@ -1,5 +1,6 @@
 package com.studybuddyai.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,8 @@ public class Document {
     @Lob
     private String content;
 
+    @JsonBackReference
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 }

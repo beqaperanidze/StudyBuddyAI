@@ -1,5 +1,6 @@
 package com.studybuddyai.service.impl;
 
+import com.studybuddyai.dto.DocumentDto;
 import com.studybuddyai.dto.UserDto;
 import com.studybuddyai.exception.DocumentNotFoundException;
 import com.studybuddyai.exception.UserNotFoundException;
@@ -14,11 +15,13 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class DocumentServiceImpl implements DocumentService {
@@ -33,7 +36,8 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public Document uploadAndParseDocument(MultipartFile file) {
+    @Transactional
+    public DocumentDto uploadAndParseDocument(MultipartFile file) {
         if (file.isEmpty()) {
             throw new RuntimeException("Uploaded file is empty");
         }
@@ -52,7 +56,8 @@ public class DocumentServiceImpl implements DocumentService {
             document.setContent(parsedText);
             document.setUser(user);
 
-            return documentRepository.save(document);
+            Document savedDocument = documentRepository.save(document);
+            return convertToDto(savedDocument);
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to read and parse PDF", e);
@@ -60,23 +65,29 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public List<Document> getMyDocuments() {
+    @Transactional(readOnly = true)
+    public List<DocumentDto> getMyDocuments() {
         User user = getAuthenticatedUser();
-        return user.getDocuments();
+        return user.getDocuments().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Document getMyDocumentById(Long id) {
+    @Transactional(readOnly = true)
+    public DocumentDto getMyDocumentById(Long id) {
         User user = getAuthenticatedUser();
 
-        return user.getDocuments().stream()
-                .filter(document -> Objects.equals(document.getId(), id))
+        Document document = user.getDocuments().stream()
+                .filter(doc -> Objects.equals(doc.getId(), id))
                 .findFirst()
                 .orElseThrow(() -> new DocumentNotFoundException("Document with ID " + id + " not found for current user."));
 
+        return convertToDto(document);
     }
 
     @Override
+    @Transactional
     public void deleteMyDocument(Long id) {
         User user = getAuthenticatedUser();
         Document deletedDocument = user.getDocuments().stream()
@@ -99,6 +110,16 @@ public class DocumentServiceImpl implements DocumentService {
 
         return userRepository.findByEmail(currentUser.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("User not found!"));
+    }
+
+
+    private DocumentDto convertToDto(Document document) {
+        DocumentDto dto = new DocumentDto();
+        dto.setId(document.getId());
+        dto.setName(document.getName());
+        dto.setOriginalFileName(document.getOriginalFileName());
+        dto.setUploadedAt(document.getUploadedAt());
+        return dto;
     }
 
 }

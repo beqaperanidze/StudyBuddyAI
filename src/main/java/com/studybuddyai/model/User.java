@@ -1,5 +1,6 @@
 package com.studybuddyai.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.studybuddyai.model.enums.AuthProvider;
 import com.studybuddyai.model.enums.Role;
 import jakarta.persistence.*;
@@ -27,6 +28,7 @@ public class User {
 
     private String providerId;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Document> documents;
 
