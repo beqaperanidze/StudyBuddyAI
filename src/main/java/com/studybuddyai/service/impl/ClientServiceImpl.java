@@ -1,6 +1,7 @@
 package com.studybuddyai.service.impl;
 
 import com.studybuddyai.dto.UserDto;
+import com.studybuddyai.exception.UserNotFoundException;
 import com.studybuddyai.mapper.UserMapper;
 import com.studybuddyai.model.OAuth2UserInfo;
 import com.studybuddyai.model.User;
@@ -8,6 +9,7 @@ import com.studybuddyai.model.enums.AuthProvider;
 import com.studybuddyai.model.enums.Role;
 import com.studybuddyai.repository.UserRepository;
 import com.studybuddyai.service.ClientService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -67,5 +69,20 @@ public class ClientServiceImpl implements ClientService {
     private String extractUsername(OAuth2User principal) {
         String email = principal.getAttribute("email");
         return email != null ? email.split("@")[0] : "user" + System.currentTimeMillis();
+    }
+
+    public User getAuthenticatedUser() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (!(auth.getPrincipal() instanceof OAuth2User oauthUser)) {
+            throw new RuntimeException("Invalid principal type");
+        }
+
+        UserDto currentUser = getCurrentUser(oauthUser);
+        if (currentUser == null) {
+            throw new RuntimeException("User not authenticated");
+        }
+
+        return userRepository.findByEmail(currentUser.getEmail())
+                .orElseThrow(() -> new UserNotFoundException("User not found!"));
     }
 }

@@ -1,19 +1,14 @@
 package com.studybuddyai.service.impl;
 
 import com.studybuddyai.dto.DocumentDto;
-import com.studybuddyai.dto.UserDto;
 import com.studybuddyai.exception.DocumentNotFoundException;
-import com.studybuddyai.exception.UserNotFoundException;
 import com.studybuddyai.model.Document;
 import com.studybuddyai.model.User;
 import com.studybuddyai.repository.DocumentRepository;
-import com.studybuddyai.repository.UserRepository;
 import com.studybuddyai.service.ClientService;
 import com.studybuddyai.service.DocumentService;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,12 +20,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class DocumentServiceImpl implements DocumentService {
-    private final UserRepository userRepository;
     private final DocumentRepository documentRepository;
     private final ClientService clientService;
 
-    public DocumentServiceImpl(UserRepository userRepository, DocumentRepository documentRepository, ClientService clientService) {
-        this.userRepository = userRepository;
+    public DocumentServiceImpl(DocumentRepository documentRepository, ClientService clientService) {
+
         this.documentRepository = documentRepository;
         this.clientService = clientService;
     }
@@ -42,7 +36,7 @@ public class DocumentServiceImpl implements DocumentService {
             throw new RuntimeException("Uploaded file is empty");
         }
 
-        User user = getAuthenticatedUser();
+        User user = clientService.getAuthenticatedUser();
 
         try (var inputStream = file.getInputStream()) {
             var pdfDocument = PDDocument.load(inputStream);
@@ -67,7 +61,7 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     @Transactional(readOnly = true)
     public List<DocumentDto> getMyDocuments() {
-        User user = getAuthenticatedUser();
+        User user = clientService.getAuthenticatedUser();
         return user.getDocuments().stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
@@ -76,7 +70,7 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     @Transactional(readOnly = true)
     public DocumentDto getMyDocumentById(Long id) {
-        User user = getAuthenticatedUser();
+        User user = clientService.getAuthenticatedUser();
 
         Document document = user.getDocuments().stream()
                 .filter(doc -> Objects.equals(doc.getId(), id))
@@ -89,27 +83,12 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     @Transactional
     public void deleteMyDocument(Long id) {
-        User user = getAuthenticatedUser();
+        User user = clientService.getAuthenticatedUser();
         Document deletedDocument = user.getDocuments().stream()
                 .filter(document -> Objects.equals(document.getId(), id))
                 .findFirst()
                 .orElseThrow(() -> new DocumentNotFoundException("Document with ID " + id + " not found for current user."));
         documentRepository.delete(deletedDocument);
-    }
-
-    private User getAuthenticatedUser() {
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        if (!(auth.getPrincipal() instanceof OAuth2User oauthUser)) {
-            throw new RuntimeException("Invalid principal type");
-        }
-
-        UserDto currentUser = clientService.getCurrentUser(oauthUser);
-        if (currentUser == null) {
-            throw new RuntimeException("User not authenticated");
-        }
-
-        return userRepository.findByEmail(currentUser.getEmail())
-                .orElseThrow(() -> new UserNotFoundException("User not found!"));
     }
 
 

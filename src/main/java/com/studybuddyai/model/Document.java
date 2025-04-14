@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -23,10 +24,16 @@ public class Document {
     private LocalDateTime uploadedAt;
 
     @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name = "content")
     private String content;
 
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "document", cascade = CascadeType.ALL)
+    private List<Quiz> quizzes;
+
 }
