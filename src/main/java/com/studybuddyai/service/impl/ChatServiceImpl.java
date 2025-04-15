@@ -1,6 +1,7 @@
 package com.studybuddyai.service.impl;
 
 import com.studybuddyai.dto.ChatMessageRequest;
+import com.studybuddyai.dto.ChatMessageRequestWithModel;
 import com.studybuddyai.exception.DocumentNotFoundException;
 import com.studybuddyai.model.ChatMessage;
 import com.studybuddyai.model.Document;
@@ -9,22 +10,34 @@ import com.studybuddyai.repository.ChatMessageRepository;
 import com.studybuddyai.repository.DocumentRepository;
 import com.studybuddyai.service.ChatService;
 import com.studybuddyai.service.ClientService;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @Service
 public class ChatServiceImpl implements ChatService {
+
     private final ClientService clientService;
     private final ChatMessageRepository chatMessageRepository;
     private final DocumentRepository documentRepository;
+    private final RestTemplate restTemplate;
 
-    public ChatServiceImpl(ClientService clientService, ChatMessageRepository chatMessageRepository, DocumentRepository documentRepository) {
+    @Value("${openai.model}")
+    private String model;
+
+    @Value("${openai.api.url}")
+    private String apiUrl;
+
+    public ChatServiceImpl(ClientService clientService, ChatMessageRepository chatMessageRepository, DocumentRepository documentRepository, @Qualifier("openaiRestTemplate") RestTemplate restTemplate) {
         this.clientService = clientService;
         this.chatMessageRepository = chatMessageRepository;
         this.documentRepository = documentRepository;
+        this.restTemplate = restTemplate;
     }
 
     @Override
@@ -91,10 +104,14 @@ public class ChatServiceImpl implements ChatService {
         chatMessageRepository.deleteByDocumentId(documentId);
     }
 
-
     private String generateAIResponse(String userQuestion, Document document) {
-
-        return "This is a placeholder AI response. Implement your AI integration here to process: " +
-                userQuestion + " based on the document: " + document.getName();
+        try {
+            ChatMessageRequestWithModel chatMessageRequest = new ChatMessageRequestWithModel
+                    (model, "Answer this question based on given document: " + userQuestion, document.getId());
+            return restTemplate.postForObject(apiUrl, chatMessageRequest, String.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return " ";
     }
 }

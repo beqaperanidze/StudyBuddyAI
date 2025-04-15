@@ -35,7 +35,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.ai:spring-ai-pdf-document-reader'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-//    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+    implementation 'com.openai:openai-java:0.15.0'
     implementation 'org.apache.pdfbox:pdfbox:2.0.27'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
     implementation 'org.mapstruct:mapstruct:1.6.0.Beta1'
